@@ -1,0 +1,22 @@
+name: Daily TikTok Shop Monitor
+on:
+  schedule:
+    - cron: "0 9 * * *"   # 09:00 UTC => 05:00 ET (daily)
+  workflow_dispatch:
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+      - name: Run monitor
+        env:
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          PRODUCTS_JSON: ${{ secrets.PRODUCTS_JSON }}
+        run: node src/run.js
